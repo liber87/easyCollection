@@ -61,6 +61,7 @@ class easyCollection
      */
     function checkAvailabilityInElem($val, $elem)
     {
+	if ((!$val) || ($elem)) return false;
         $arr = array();
         foreach (explode(',', $elem) as $e) $arr[] = trim($e);
         if (in_array($val, $arr)) return true;
