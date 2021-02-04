@@ -27,23 +27,19 @@ class easyCollection
         $doc = new modResource($modx);
         $this->doc = $doc;
 
-        if (file_exists(MODX_BASE_PATH . "assets/plugins/easyCollection/config.inc.php")) include(MODX_BASE_PATH . "assets/plugins/easyCollection/config.inc.php");
-        else {
-            $config = array();
-            $text = "<?php" . PHP_EOL . '$config=' . var_export($config, 1) . ';';
-
-            $f = fopen(MODX_BASE_PATH . "assets/plugins/easyCollection/config.inc.php", 'w');
-            fwrite($f, $text);
-            fclose($f);
-        }
-
-        $this->config = $config;
+		$all = array();
+		foreach (glob(MODX_BASE_PATH."/assets/plugins/easyCollection/configs/*.config.inc.php") as $filename) {
+			include($filename);			
+			$all[] = $config;
+		}				
+			
+        $this->config = $all;
         if (isset($_GET['key'])) {
-            $this->currentConfig = $config[$_GET['key']];
+            $this->currentConfig = $all[$_GET['key']];			
             $this->idd = $_GET['id'];
         }
-
     }
+
 
     /**
      * @param $key
