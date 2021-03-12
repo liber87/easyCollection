@@ -1,3 +1,11 @@
+<html>
+	<head>
+		<title>[+pagetitle+]</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width">
+		<meta name="theme-color" content="#1d2023">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<link rel="stylesheet" type="text/css" href="media/style/default/css/styles.min.css?v=1611226578">
 		<link rel="stylesheet" type="text/css" href="./../assets/lib/easyui/css/easyui.css">
 		<link rel="stylesheet" type="text/css" href="./../assets/lib/easyui/css/icon.css">		
 		<script type="text/javascript" src="./../assets/lib/easyui/js/jquery.min.js"></script>
@@ -5,7 +13,8 @@
 		<script type="text/javascript" src="./../assets/lib/easyui/js/datagrid-detailview.js"></script>
 		<script type="text/javascript" src="./../assets/lib/easyui/js/datagrid-dnd.js"></script>
 		<script type="text/javascript" src="./../assets/lib/easyui/js/datagrid-filter.js"></script>
-		
+	</head>
+	<body>
 		<style>
 			.sectionBody td, .sectionBody th{vertical-align:middle;}
 			.pagination-info{margin-right: 20px;}
@@ -19,7 +28,7 @@
 		<div id="actions">
 			<div class="btn-group">			
 				<a id="createChildren" class="btn btn-success" href="index.php?a=4&pid=[+id+]" target="main">
-					<i class="fa fa-floppy-o"></i><span>Создать дочерний документ</span>
+					<i class="fa fa-floppy-o"></i><span>Добавить новый товар</span>
 				</a>
 				[+button+]
 				<!--a id="Button5" class="btn btn-success" href="index.php?a=27&id=[+id+]&edit_current" target="main">
@@ -39,10 +48,11 @@
 				toolbar="#toolbar" 
 				pagination="true"
 				rownumbers="true"
+				height="auto"
 				fitColumns="true" 				
 				title=""
 				singleSelect="false"
-				ctrlSelect="true"
+				ctrlSelect="true"				
 				>
 					<thead>
 						<tr>
@@ -65,27 +75,40 @@
 				</form>
 			</div>
 		</div>	
+		
+		<div id="setcat" class="easyui-dialog"
+		style="width:600px;height:720px;padding:10px 20px" closed="true" buttons="#dlg-buttons">		
+			<div id="div_form">				
+				<form id="ff" method="post">		
+					<input type="hidden" name="id" value="">							
+					
+				</form>
+			</div>
+		</div>
+		
 		<div id="dlg-buttons">	
 			<a href="#" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">Отмена</a>
 			<a href="#" class="easyui-linkbutton" iconCls="icon-ok" onclick="save()">Сохранить</a>
 		</div>
 		<div id="mm-docs-once" class="easyui-menu">
-			<div data-action="view"><i class="fa fa-eye" aria-hidden="true"></i>Просмотр</div>
-			<div data-action="edit"><i class="fa fa-pencil" aria-hidden="true"></i>Редактировать</div>			
-			<div data-action="create"><i class="fa fa-file-o"></i>Создать</div>			
+			<div data-action="setcat"><i class="fa fa-folder" aria-hidden="true"></i>Установить категории</div>
+			<div class="menu-sep"></div>
+			<div data-action="view"><i class="fa fa-eye" aria-hidden="true"></i>View</div>
+			<div data-action="edit"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</div>			
+			<div data-action="create"><i class="fa fa-file-o"></i>Create</div>			
 			<!--div data-options="iconCls:'icon-edit'" data-action="fastEdit">Быстро изменить</div-->		
 			<div class="menu-sep"></div>
-			<div data-action="published"><i class="fa fa-check"></i> Опубликовать</div>
-			<div data-action="unpublished"><i class="fa fa-close" aria-hidden="true"></i>Отменить публикацию</div>
+			<div data-action="published"><i class="fa fa-check"></i> Published</div>
+			<div data-action="unpublished"><i class="fa fa-close" aria-hidden="true"></i>Unpublished</div>
 			<div class="menu-sep"></div>
-			<div data-action="undelete"><i class="fa fa-undo"></i>Восстановить</div>
-			<div data-action="delete"><i class="fa fa-trash"></i>Удалить</div>			
+			<div data-action="undelete"><i class="fa fa-undo"></i>Restore</div>
+			<div data-action="delete"><i class="fa fa-trash"></i>Remove</div>			
 		</div>
 		<div id="mm-docs-more" class="easyui-menu">		
-			<div data-action="published"><i class="fa fa-check"></i> Опубликовать</div>
-			<div data-action="unpublished"><i class="fa fa-close" aria-hidden="true"></i>Отменить публикацию</div>
-			<div data-action="undelete"><i class="fa fa-undo"></i>Восстановить</div>
-			<div data-action="delete"><i class="fa fa-trash"></i>Удалить</div>			
+			<div data-action="published"><i class="fa fa-check"></i> Published</div>
+			<div data-action="unpublished"><i class="fa fa-close" aria-hidden="true"></i>Unpublished</div>
+			<div data-action="undelete"><i class="fa fa-undo"></i>Restore</div>
+			<div data-action="delete"><i class="fa fa-trash"></i>Remove</div>			
 		</div>
 		<div id="mm-table-once" class="easyui-menu">					
 			<div data-action="edit"><i class="fa fa-pencil" aria-hidden="true"></i>Редактировать</div>	
@@ -110,7 +133,35 @@
 			}
 			
 			function getImage(img){			
-				return '<img src="./../'+img+'" width="100">';
+				//return '<div style="height:64px;"><img src="'+downscaleImage('./../'+img, 64)+'"></div>';
+				return '<div style="height:64px;"><img src="./../'+img+'" style="max-height:64px;max-width:64px;"></div>';
+			}
+			
+			function downscaleImage(dataUrl, newWidth, imageType, imageArguments) {
+				"use strict";
+				var image, oldWidth, oldHeight, newHeight, canvas, ctx, newDataUrl;
+
+				// Provide default values
+				imageType = imageType || "image/jpeg";
+				imageArguments = imageArguments || 0.7;
+
+				// Create a temporary image so that we can compute the height of the downscaled image.
+				image = new Image();
+				image.src = dataUrl;
+				oldWidth = image.width;
+				oldHeight = image.height;
+				newHeight = Math.floor(oldHeight / oldWidth * newWidth)
+
+				// Create a temporary canvas to draw the downscaled image on.
+				canvas = document.createElement("canvas");
+				canvas.width = newWidth;
+				canvas.height = newHeight;
+
+				// Draw the downscaled image on the canvas and return the new data URL.
+				ctx = canvas.getContext("2d");
+				ctx.drawImage(image, 0, 0, newWidth, newHeight);
+				newDataUrl = canvas.toDataURL(imageType, imageArguments);				
+				return newDataUrl;
 			}
 			
 			function textBreak(txt){			
@@ -168,8 +219,8 @@
 					}
 				});
 				
-				var hb = window.parent.$("iframe.tabframes").height() - 50;
-				//console.log();
+				var hb = window.parent.$("iframe.tabframes").height()-50;
+				//console.log(hb);
 				$('#body_table').css({"height":hb});
 				
 				var dg = $('#dg').datagrid({
@@ -251,6 +302,10 @@
 										$('#createChildren').trigger('click');
 									break;
 									
+									case 'setcat':
+										$('#setcat').dialog('open').dialog('setTitle','Установка категории');										
+									break;
+									
 									case 'unpublished': 
 										$.each(rows,function(index,item){  
 											$.ajax({
@@ -317,7 +372,7 @@
 				$(document).on('contextmenu','.sectionBody',function(e){	
 					e.preventDefault;
 					return false;
-				});
+		});
 				$(document).on('change','.checkbox',function(){										
 					var field = $(this).closest('td').attr('field');
 					$.ajax({
@@ -358,4 +413,5 @@
 			});					
 			
 		</script>
-	
+	</body>
+</html>
