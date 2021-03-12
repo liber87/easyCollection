@@ -28,10 +28,10 @@ class easyCollection
         $this->doc = $doc;
 
 		$all = array();
-		foreach (glob(MODX_BASE_PATH."/assets/plugins/easyCollection/configs/*.config.inc.php") as $filename) {
+		foreach (glob(MODX_BASE_PATH."/assets/plugins/easyCollection/configs/*.config.inc.php") as $filename) {			
 			include($filename);			
-			$all[] = $config;
-		}				
+			foreach($config as $conf) $all[] = $conf;
+		}		
 			
         $this->config = $all;
         if (isset($_GET['key'])) {
@@ -39,7 +39,6 @@ class easyCollection
             $this->idd = $_GET['id'];
         }
     }
-
 
     /**
      * @param $key
@@ -60,24 +59,27 @@ class easyCollection
      * @return bool
      */
     function checkAvailabilityInElem($val, $elem)
-    {
-	if ((!$val) || (!$elem)) return false;
-        $arr = array();
+    {		
+		if ((!$val) || (!$elem)) return false;
+        $arr = array();		
         foreach (explode(',', $elem) as $e) $arr[] = trim($e);
         if (in_array($val, $arr)) return true;
     }
 
 
-    /**
+     /**
      * Поиск индекса конфига
      * @param $doc
      * @return int|string
      */
     function checkAvailabilityInCofig($doc)
-    {
-        foreach ($this->config as $key => $c) {
-            if ($this->checkAvailabilityInElem($doc['id'], $c['id']) || $this->checkAvailabilityInElem($doc['template'], $c['template'])) return $key;
+    {			
+        foreach ($this->config as $key => $c) {			
+            if ($this->checkAvailabilityInElem($doc['id'], $c['id']) || $this->checkAvailabilityInElem($doc['template'], $c['template'])) {				
+				return $key;
+			}
         }
+		
     }
 
     /**
@@ -239,8 +241,7 @@ class easyCollection
             'parents' => $this->idd,
             'tvPrefix' => '',
             'tvList' => implode(',', $tvList),
-            'JSONformat' => 'new',
-            'filters' => $filters,
+            'JSONformat' => 'new',            
             'showNoPublish' => 1,
             'display' => $rows,
             'offset' => $offset,
