@@ -5,7 +5,7 @@
  * easyCollection
  *
  * @category    plugin
- * @internal    @events OnDocFormPrerender,OnManagerNodePrerender,OnPageNotFound
+ * @internal    @events OnManagerPageInit,OnManagerNodePrerender,OnPageNotFound
  * @internal    @modx_category Content
  * @internal    @properties 
  * @internal    @disabled 0
