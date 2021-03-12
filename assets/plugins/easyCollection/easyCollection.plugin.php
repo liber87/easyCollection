@@ -8,22 +8,26 @@
 	include_once(dirname(__FILE__).'/classes/easyCollection.class.php');
 	$ec = new easyCollection($modx);	
 	
-	/*if ($modx->event->name=='OnManagerNodePrerender'){
-		
+	if ($modx->event->name=='OnManagerNodePrerender'){		
 		$hideIds = $ec->findHideChildren();		
 		if (count($hideIds)) if (in_array($ph['id'], $hideIds)) {			
 			$ph['showChildren'] = false;						
 		}
 		$modx->event->setOutput(serialize($ph));
-	}*/
+	}
+	
+	
+	if (($modx->event->name=='OnManagerPageInit') and (($modx->event->params['action']==3) or ($modx->event->params['action']==27) )){
+		if ($_REQUEST['id']) {
+			$id = (int) $_REQUEST['id'];
+			$res = $modx->db->query('Select *  from '.$modx->getFullTableName('site_content').' where id='.$id);
+			$doc = $modx->db->getRow($res);
+		} else return;
 		
-	if ($modx->event->name=='OnDocFormPrerender'){
-		if (($modx->event->params['mode']=='new') or (isset($_GET['edit_current'])) or (isset($_GET['pid']))) return;
-		$key = $ec->checkAvailabilityInCofig($modx->documentObject);	
-		
+		$key = $ec->checkAvailabilityInCofig($doc);			
 		if ($key>-1){
 			
-			$ec->setCurrentConfig($key,$modx->documentObject['id']);			
+			$ec->setCurrentConfig($key,$doc['id']);			
 			$ec->getTable();
 			exit();
 		}
