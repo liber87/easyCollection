@@ -50,6 +50,21 @@ class easyCollection
         $this->idd = $id;
         $this->currentConfigKey = $key;
     }
+	
+	/**
+     * @param $key
+     * @param $id
+     */
+    function setCurrentConfigName($name,$key)
+    {
+		if (file_exists(MODX_BASE_PATH."/assets/plugins/easyCollection/configs/".$name.".config.inc.php")){
+			include(MODX_BASE_PATH."/assets/plugins/easyCollection/configs/".$name.".config.inc.php");
+			$this->currentConfig = $config[$key];
+			//$this->idd = $id;
+			$this->currentConfigKey = $key;
+		} else return 'config file not found!';
+        
+    }
 
 
     /**
