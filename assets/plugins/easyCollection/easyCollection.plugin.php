@@ -58,6 +58,14 @@
 								else $result = $ec->editDataOneTable($_POST);
 							break;
 							
+							case "copy":								
+								$result = $ec->copyDataDocuments($_POST);
+							break;
+							
+							case "cut":								
+								$result = $ec->cutDataDocuments($_POST);
+							break;
+							
 							case "setCheckbox":
 								if (!$ec->currentConfig['oneTable']) $result = $ec->setCheckboxDocuments($_POST);
 								else $result = $ec->setCheckboxOneTable($_POST);
