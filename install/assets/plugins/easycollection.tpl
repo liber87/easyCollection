@@ -13,3 +13,4 @@
  */
 require MODX_BASE_PATH."assets/plugins/easyCollection/easyCollection.plugin.php";
 
+

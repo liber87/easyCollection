@@ -90,25 +90,37 @@
 			<a href="#" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">Отмена</a>
 			<a href="#" class="easyui-linkbutton" iconCls="icon-ok" onclick="save()">Сохранить</a>
 		</div>
+		
+		<div id="mm-defalt" class="easyui-menu">
+			<div data-action="paste"><i class="fa fa-paste" aria-hidden="true"></i>Вставить</div>
+			<div data-action="create"><i class="fa fa-file-o"></i>Создать</div>
+		</div>
+		
 		<div id="mm-docs-once" class="easyui-menu">
-			<div data-action="setcat"><i class="fa fa-folder" aria-hidden="true"></i>Установить категории</div>
+			<div data-action="copy"><i class="fa fa-copy" aria-hidden="true"></i>Копировать</div>
+			<div data-action="cut"><i class="fa fa-cut" aria-hidden="true"></i>Вырезать</div>
+			<div data-action="paste"><i class="fa fa-paste" aria-hidden="true"></i>Вставить</div>
 			<div class="menu-sep"></div>
-			<div data-action="view"><i class="fa fa-eye" aria-hidden="true"></i>View</div>
-			<div data-action="edit"><i class="fa fa-pencil" aria-hidden="true"></i>Edit</div>			
-			<div data-action="create"><i class="fa fa-file-o"></i>Create</div>			
+			<div data-action="view"><i class="fa fa-eye" aria-hidden="true"></i>Просмотр</div>
+			<div data-action="edit"><i class="fa fa-pencil" aria-hidden="true"></i>Редактирование</div>			
+			<div data-action="create"><i class="fa fa-file-o"></i>Создать</div>			
 			<!--div data-options="iconCls:'icon-edit'" data-action="fastEdit">Быстро изменить</div-->		
 			<div class="menu-sep"></div>
-			<div data-action="published"><i class="fa fa-check"></i> Published</div>
-			<div data-action="unpublished"><i class="fa fa-close" aria-hidden="true"></i>Unpublished</div>
+			<div data-action="published"><i class="fa fa-check"></i> Опубликовать</div>
+			<div data-action="unpublished"><i class="fa fa-close" aria-hidden="true"></i>Снять с публикации</div>
 			<div class="menu-sep"></div>
-			<div data-action="undelete"><i class="fa fa-undo"></i>Restore</div>
-			<div data-action="delete"><i class="fa fa-trash"></i>Remove</div>			
+			<div data-action="undelete"><i class="fa fa-undo"></i>Восстановить</div>
+			<div data-action="delete"><i class="fa fa-trash"></i>Удалить</div>			
 		</div>
 		<div id="mm-docs-more" class="easyui-menu">		
-			<div data-action="published"><i class="fa fa-check"></i> Published</div>
-			<div data-action="unpublished"><i class="fa fa-close" aria-hidden="true"></i>Unpublished</div>
-			<div data-action="undelete"><i class="fa fa-undo"></i>Restore</div>
-			<div data-action="delete"><i class="fa fa-trash"></i>Remove</div>			
+			<div data-action="copy"><i class="fa fa-copy" aria-hidden="true"></i>Копировать</div>
+			<div data-action="cut"><i class="fa fa-cut" aria-hidden="true"></i>Вырезать</div>
+			<div data-action="paste"><i class="fa fa-paste" aria-hidden="true"></i>Вставить</div>
+			<div class="menu-sep"></div>
+			<div data-action="published"><i class="fa fa-check"></i> Опубликовать</div>
+			<div data-action="unpublished"><i class="fa fa-close" aria-hidden="true"></i>Снять с публикации</div>
+			<div data-action="undelete"><i class="fa fa-undo"></i>Восстановить</div>
+			<div data-action="delete"><i class="fa fa-trash"></i>Удалить</div>			
 		</div>
 		<div id="mm-table-once" class="easyui-menu">					
 			<div data-action="edit"><i class="fa fa-pencil" aria-hidden="true"></i>Редактировать</div>	
@@ -200,7 +212,6 @@
 				console.log($('#ff'));
 				$('#ff').form('load',row);						
 			} 
-			
 				
 			
 			$(window).resize(function() {
@@ -208,6 +219,14 @@
 			});
 			
 			$(function(){
+				localStorage.setItem('copy_make','');
+				$(window).focus(function() {
+					if (localStorage.copy_make){
+						localStorage.setItem('copy_make','');
+						$('#dg').datagrid('reload');
+					}
+				});
+				
 				if (mode=='table') {
 					$('#createChildren').hide();					
 				}
@@ -297,13 +316,42 @@
 										$('#dlg').dialog('open').dialog('setTitle','Редактирование'); 
 									break;
 									
-									case 'create':
-										console.log($('#createChildren'));
+									case 'create':									
 										$('#createChildren').trigger('click');
 									break;
 									
-									case 'setcat':
-										$('#setcat').dialog('open').dialog('setTitle','Установка категории');										
+									case 'copy':
+										var copy_ids = [];
+										$.each(rows,function(index,row){  
+											copy_ids.push(row.id);
+										});
+										localStorage.setItem('copy_action','copy');
+										localStorage.setItem('copy_source',[+id+]);
+										localStorage.setItem('copy_ids',copy_ids.join(','));										
+									break;
+									
+									case 'cut':
+										var copy_ids = [];
+										$.each(rows,function(index,row){  
+											copy_ids.push(row.id);
+										});
+										localStorage.setItem('copy_action','cut');
+										localStorage.setItem('copy_source',[+id+]);
+										localStorage.setItem('copy_ids',copy_ids.join(','));										
+									break;
+									
+									case 'paste':																				
+										if (localStorage.copy_source==[+id+]) return;
+										$.ajax({
+											url: '/../easyCollection?command=crud&act='+localStorage.copy_action,
+											method: 'post',												
+											data: { ids: localStorage.copy_ids, source: localStorage.copy_source, target: [+id+]},
+											async: false
+										});	
+										$('#dg').datagrid('reload'); 
+										localStorage.setItem('copy_action','');										
+										localStorage.setItem('copy_ids','');
+										localStorage.setItem('copy_make',true);
 									break;
 									
 									case 'unpublished': 
@@ -353,7 +401,7 @@
 												async: false
 											});											
 										});
-										$('#dg').datagrid('reload'); 
+										$('#dg').datagrid('reload'); 										
 									break;
 									
 								}
@@ -371,8 +419,39 @@
 				//dg.datagrid('enableFilter');
 				$(document).on('contextmenu','.sectionBody',function(e){	
 					e.preventDefault;
-					return false;
-		});
+					var classes = $(e.target).attr('class');
+					if(typeof classes == "undefined") return;
+					if(classes.indexOf('datagrid-cell')==-1){					
+						$('#mm-defalt').menu('show', {
+							left: e.clientX,
+							top: e.clientY,
+							onClick:function(item){
+								var act = $(item.target).data('action');
+								switch(act) {
+									case 'paste':										
+										if (localStorage.copy_source==[+id+]) return;
+										$.ajax({
+											url: '/../easyCollection?command=crud&act='+localStorage.copy_action,
+											method: 'post',												
+											data: { ids: localStorage.copy_ids, source: localStorage.copy_source, target: [+id+]},
+											async: false
+										});	
+										$('#dg').datagrid('reload'); 
+										localStorage.setItem('copy_action','');										
+										localStorage.setItem('copy_ids','');
+										localStorage.setItem('copy_make',true);
+									break;
+									case 'create':									
+										$('#createChildren').trigger('click');
+									break;
+								}
+							}
+						});	
+					}
+					return false;	
+				});
+					
+				
 				$(document).on('change','.checkbox',function(){										
 					var field = $(this).closest('td').attr('field');
 					$.ajax({

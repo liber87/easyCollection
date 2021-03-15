@@ -254,6 +254,38 @@ class easyCollection
         exit();
     }
 
+	/**
+     * @param $data
+     */
+    function copyDataDocuments($data)
+	{		
+		foreach(explode(',',$data['ids']) as $doc){
+			$res = $this->modx->db->query('Select * from ' . $this->modx->getFullTableName('site_content') . ' where id='.$doc);
+			$row = $this->modx->db->getRow($res);
+			unset($row['id']);
+			$row['parent'] = $data['target'];
+			
+			$new_id = $this->modx->db->insert($row,$this->modx->getFullTableName('site_content'));
+			$this->modx->logEvent(0, 3, $id, 'easyCollection-id');
+			
+			$res = $this->modx->db->query('Select * from ' . $this->modx->getFullTableName('site_tmplvar_contentvalues') . ' where contentid='.$doc);
+			while ($row = $this->modx->db->getRow($res)){
+				unset($row['id']);
+				$row['contentid'] = $new_id;
+				$this->modx->db->insert($row,$this->modx->getFullTableName('site_tmplvar_contentvalues'));
+			}
+		}
+	}
+	
+	/**
+     * @param $data
+     */
+    function cutDataDocuments($data)
+	{		
+		 return $this->modx->db->query('Update ' . $this->modx->getFullTableName('site_content') . ' 
+		 set parent='.$data['target'].' where id in ('.$data['ids'].')');
+	}
+	
     /**
      * @param $data
      */

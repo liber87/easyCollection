@@ -1,5 +1,6 @@
 <?php
-$config = array(			
+$config = array(
+	 array(			
 		'id'=>'-1',
 		'name'=>'Просмотр лога MODX',
 		'fields' => 
@@ -19,5 +20,5 @@ $config = array(
 		'search_'=>' `email` like "%[+txt_search+]%" or `fullname` like "%[+txt_search+]%"',
 		'prepare_'=>'users.easyCollection.dl',
 		'button'=>'@CODE: <a id="Button5" class="btn btn-success" href="index.php?a=87" target="main"><i class="fa fa-floppy-o"></i><span>Добавить событие</span></a>'
-	
+	)
 );
