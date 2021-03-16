@@ -141,12 +141,12 @@ class easyCollection
 
         if ($this->currentConfig['name']) $pagetitle = $this->currentConfig['name'];
         else $pagetitle = $this->modx->db->getValue('Select pagetitle from ' . $this->modx->getFullTableName('site_content') . ' where id=' . $this->idd);
-
+	$idd = (int) $this->idd;
         $data = array(
             'mode' => $mode,
             'txt_search' => $_GET['txt_search'],
             'key' => $this->currentConfigKey,
-            'id' => $this->idd,
+            'id' => $idd,
             'pagetitle' => $pagetitle,
             'dc' => '',
             'table' => '',
