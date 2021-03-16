@@ -115,7 +115,7 @@ class easyCollection
         return $ids;
     }
 
-    /**
+     /**
      *
      */
     function getTable()
@@ -124,7 +124,9 @@ class easyCollection
         if (file_exists(MODX_BASE_PATH . 'assets/plugins/easyCollection/tpls/' . $tplName)) {
             $table = file_get_contents(MODX_BASE_PATH . 'assets/plugins/easyCollection/tpls/' . $tplName);
         } else $table = file_get_contents(MODX_BASE_PATH . 'assets/plugins/easyCollection/tpls/default.tpl');
-        echo $this->tpl->parseChunk('@CODE: ' . $table, $this->getPlaceholders());
+		$out = $this->tpl->parseChunk('@CODE: ' . $table, $this->getPlaceholders());
+		if ($this->currentConfig['toPlaceholder']) $this->modx->setPlaceholder($this->currentConfig['toPlaceholder'],$out);
+        else echo $out;
     }
 
     /**
